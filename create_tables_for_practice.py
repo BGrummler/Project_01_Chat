@@ -1,7 +1,10 @@
 import sqlite3
 from sqlite3 import Error
+"""
 
+CREATES A LOCAL DATABASE WITH 2 TABLES NAMED test.db
 
+"""
 def create_connection(db_file):
     """ create a database connection to the SQLite database
         specified by db_file
