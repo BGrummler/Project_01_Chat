@@ -1,0 +1,19 @@
+Widgets:
+
+<Widgets>:
+    col: 2
+    rows: 1
+    Label:
+        text: "Infobox und Anderes?"
+    InfoAndButton:
+
+<InfoAndButton@BoxLayout>:
+    orientation: "vertical"
+    Label:
+        text: root.chatSimulation
+        size_hint: 1, .85
+    Button:
+        text: "SendenButton"
+        on_press: root.testChat()
+        size_hint: 1, .15
+    
