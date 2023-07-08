@@ -41,7 +41,7 @@ def select_table(table, column = '*', WHERE = ''): # default column is * | defau
     except Error as e:
         print(e)
 
-def filter_results_by_WHERE(table, new_user): #If needed overwrite the default WHERE = '' with WHERE = filter_results_by_WHERE in the sselect_table() FUNKTION 
+def filter_results_by_WHERE(table, new_user): #If needed overwrite the default WHERE = '' with WHERE = filter_results_by_WHERE in the select_table() FUNKTION 
     where_string_sql = f"WHERE {table} = '{new_user}'"
     return where_string_sql
 
