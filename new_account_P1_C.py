@@ -1,7 +1,10 @@
 import sqlite3
 from sqlite3 import Error
+from pathlib import Path
 
-database = r"C:\FIAE\Python\Project1Chat\test.db" # TODO adjust appopriaty, maybe we can make this address calculated by current folder ?
+current_path = Path.cwd()
+database = str((current_path) / "test.db")
+#database = r"C:\FIAE\Python\Project1Chat\test.db" # TODO adjust appopriaty, maybe we can make this address calculated by current folder ?
 
 def create_connection(db_file):
     """ 
