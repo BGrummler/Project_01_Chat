@@ -1,24 +1,29 @@
 from kivy.app import App
-from kivy.properties import StringProperty
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.stacklayout import StackLayout
-from kivy.uix.button import Button
-from kivy.uix.widget import Widget
 
-chatSimulation = StringProperty("Hier steht dann Chat")
 
-class Widgets(GridLayout):
+class Widgets(BoxLayout):
     pass
 
-  
-class InfoAndButton(BoxLayout):
-    chatSimulation = StringProperty("Hier steht dann Zeug\n")
-    
+
+class RightColumn(BoxLayout):
+
     def testChat(self):
-        self.chatSimulation = self.chatSimulation + "Und noch eine Zeile\n"
+        left_label = self.parent.ids.left_column.ids.left_label
+        chat_input = self.parent.ids.left_column.ids.chat_input
+
+        if chat_input.text != "":
+            left_label.text =  left_label.text + "\n" + chat_input.text
+            chat_input.text = ""
+            chat_input.focus = True
+
+
+class LeftColumn(BoxLayout):
+    pass
+
 
 class ChatProject(App):
     pass
+
 
 ChatProject().run()

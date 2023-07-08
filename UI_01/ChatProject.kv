@@ -1,19 +1,60 @@
 Widgets:
 
 <Widgets>:
-    col: 2
-    rows: 1
-    Label:
-        text: "Infobox und Anderes?"
-    InfoAndButton:
+    orientation: "horizontal"
+    canvas.before:
+        Color:
+            rgba: 30, 70, 210, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            #source: r"UI_01\Ressources\blue-background.jpg"
+    canvas:
+        Color:
+            rgba: 0, 0, 0, .6
+        Line:
+            points: (self.width/4*3, 0, self.width/4*3, self.height)
+            width: 2
+        Line:
+            points: (0, self.height/4, self.width, self.height/4)
+            width: 2
+    
+    LeftColumn:
+        id: left_column
+        
+    RightColumn:
+        id: right_column
 
-<InfoAndButton@BoxLayout>:
+<LeftColumn>:
     orientation: "vertical"
+    size_hint: 1.5 , 1
+    padding: 5, 5, 0, 0
+
     Label:
-        text: root.chatSimulation
+        id: left_label
+        text: "probieren wir weiter"
+        text_size: self.size
+        halign: "left"
+        valign: "top"
+        padding: 5, 5, 5, 5
+        size_hint: 1, .75
+    TextInput:
+        id: chat_input
+        size_hint: 1, .25
+        hint_text: "Hier Nachricht eingeben"
+        
+        multiline: False
+        on_text_validate: root.parent.ids.right_column.testChat()
+
+<RightColumn>:
+    orientation: "vertical"
+    size_hint: .5 , 1
+    Label:
+        id: right_label
+        text: "Label für Info etc."
         size_hint: 1, .85
     Button:
-        text: "SendenButton"
+        id: send_button
+        text: "Senden Button"
         on_press: root.testChat()
-        size_hint: 1, .15
-    
+        size_hint: 1, .10
