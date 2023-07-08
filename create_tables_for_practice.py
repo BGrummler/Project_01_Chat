@@ -1,6 +1,9 @@
 import sqlite3
 from sqlite3 import Error
+from pathlib import Path
 
+current_path = Path.cwd()
+database = str((current_path) / "test.db")
 
 def create_connection(db_file):
     """ create a database connection to the SQLite database
@@ -32,7 +35,7 @@ def create_table(conn, create_table_sql):
 
 
 def main():
-    database = r"C:\FIAE\Python\Project1Chat\test.db"
+    # database = r"C:\FIAE\Python\Project1Chat\test.db"
 
     sql_create_logins_table = """CREATE TABLE IF NOT EXISTS LOGINS (
                                     LoginID INTEGER PRIMARY KEY AUTOINCREMENT,
