@@ -3,12 +3,10 @@ Widgets:
 <Widgets>:
     orientation: "horizontal"
     canvas.before:
-        Color:
-            rgba: 30, 70, 210, 1
         Rectangle:
             pos: self.pos
             size: self.size
-            #source: r"UI_01\Ressources\blue-background.jpg"
+            source: r"UI_01\Ressources\blue-background.jpg"
     canvas:
         Color:
             rgba: 0, 0, 0, .6
@@ -28,7 +26,7 @@ Widgets:
 <LeftColumn>:
     orientation: "vertical"
     size_hint: 1.5 , 1
-    padding: 5, 5, 0, 0
+    padding: 0, 5, 0, 0
 
     Label:
         id: left_label
