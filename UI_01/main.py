@@ -9,7 +9,7 @@ class Widgets(BoxLayout):
 class RightColumn(BoxLayout):
 
     def testChat(self):
-        left_label = self.parent.ids.left_column.ids.left_label
+        left_label = self.parent.ids.left_column.ids.ScrollChat.ids.left_label
         chat_input = self.parent.ids.left_column.ids.chat_input
 
         if chat_input.text != "":
