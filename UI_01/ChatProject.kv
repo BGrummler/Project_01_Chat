@@ -1,0 +1,74 @@
+Widgets:
+
+<Widgets>:
+    orientation: "horizontal"
+    canvas.before:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: r"UI_01\Ressources\blue-background.jpg"
+    canvas:
+        Color:
+            rgba: 0, 0, 0, .6
+        Line:
+            points: (self.width/4*3, 0, self.width/4*3, self.height)
+            width: 2
+        Line:
+            points: (0, self.height/4, self.width, self.height/4)
+            width: 2
+    
+    LeftColumn:
+        id: left_column
+        
+    RightColumn:
+        id: right_column
+
+<ScrollChat@ScrollView>:
+    Label:
+        id: left_label
+        size_hint_y: None  # Allow height to be set manually
+        height: self.texture_size[1]  # Set height based on content
+        text_size: self.width, None  # Wrap text based on Label's width
+        text: "probieren wir weiter"
+        #text_size: self.size
+        halign: "left"
+        valign: "top"
+        padding: 5, 5, 5, 5
+        
+
+<LeftColumn>:
+    orientation: "vertical"
+    size_hint: 1.5 , 1
+    padding: 0, 5, 0, 0
+    ScrollChat:
+        id:ScrollChat
+        size_hint: 1, .75
+
+    # Label:
+    #     id: left_label
+    #     text: "probieren wir weiter"
+    #     text_size: self.size
+    #     halign: "left"
+    #     valign: "top"
+    #     padding: 5, 5, 5, 5
+    #     size_hint: 1, .75
+    TextInput:
+        id: chat_input
+        size_hint: 1, .25
+        hint_text: "Hier Nachricht eingeben"
+        
+        multiline: False
+        on_text_validate: root.parent.ids.right_column.testChat()
+
+<RightColumn>:
+    orientation: "vertical"
+    size_hint: .5 , 1
+    Label:
+        id: right_label
+        text: "Label für Info etc."
+        size_hint: 1, .85
+    Button:
+        id: send_button
+        text: "Senden Button"
+        on_press: root.testChat()
+        size_hint: 1, .10
