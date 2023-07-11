@@ -1,36 +1,79 @@
-Widgets:
+Manager:
 
-<Widgets>:
-    orientation: "horizontal"
-    canvas.before:
-        Rectangle:
-            pos: self.pos
-            size: self.size
-            source: r"UI_01\Ressources\blue-background.jpg"
-    canvas:
-        Color:
-            rgba: 0, 0, 0, .6
-        Line:
-            points: (self.width/4*3, 0, self.width/4*3, self.height)
-            width: 2
-        Line:
-            points: (0, self.height/4, self.width, self.height/4)
-            width: 2
-    
-    LeftColumn:
-        id: left_column
+
+<Manager>:
+    LogInScreen:
+        name: "LogInScreen"
+    ChatScreen:
+        name: "ChatScreen"
+
+<LogInScreen>:
+    GridLayout:
+        rows: 2
+        canvas.before:
+            Rectangle:
+                pos: self.pos
+                size: self.size
+                source: r"UI_01\Ressources\blue-background.jpg"
+        BoxLayout:
+            orientation: "vertical"
+            
+            Label:
+                id: "oben"
+                text: "Hier Username eintragen"
+                valign: "bottom"
+                
+            UserText:
+                
+            Label:
+                id: "mitte"
+                text: "Hier Passwort angeben"
+                valign: "bottom"
+                
+            UserPW:
+                
+            Label:
+                id: "unten"
         
-    RightColumn:
-        id: right_column
+        Button:
+            id: "sendlogin"
+            text: "Send"
+            on_press: app.root.current = 'ChatScreen' #root.validate_login(self)
+
+
+
+<ChatScreen>:
+    name: "ChatScreen"
+    BoxLayout:
+        orientation: "horizontal"
+        canvas.before:
+            Rectangle:
+                pos: self.pos
+                size: self.size
+                source: r"UI_01\Ressources\blue-background.jpg"
+        canvas:
+            Color:
+                rgba: 0, 0, 0, .6
+            Line:
+                points: (self.width/4*3, 0, self.width/4*3, self.height)
+                width: 2
+            Line:
+                points: (0, self.height/4, self.width, self.height/4)
+                width: 2
+        
+        LeftColumn:
+            id: left_column
+            
+        RightColumn:
+            id: right_column
 
 <ScrollChat@ScrollView>:
     Label:
         id: left_label
-        size_hint_y: None  # Allow height to be set manually
-        height: self.texture_size[1]  # Set height based on content
-        text_size: self.width, None  # Wrap text based on Label's width
+        size_hint_y: None
+        height: self.texture_size[1]
+        text_size: self.width, None #none for scrolling!
         text: "probieren wir weiter"
-        #text_size: self.size
         halign: "left"
         valign: "top"
         padding: 5, 5, 5, 5
@@ -43,20 +86,11 @@ Widgets:
     ScrollChat:
         id:ScrollChat
         size_hint: 1, .75
-
-    # Label:
-    #     id: left_label
-    #     text: "probieren wir weiter"
-    #     text_size: self.size
-    #     halign: "left"
-    #     valign: "top"
-    #     padding: 5, 5, 5, 5
-    #     size_hint: 1, .75
     TextInput:
         id: chat_input
         size_hint: 1, .25
         hint_text: "Hier Nachricht eingeben"
-        
+        text_validate_unfocus: False        
         multiline: False
         on_text_validate: root.parent.ids.right_column.testChat()
 
@@ -72,3 +106,38 @@ Widgets:
         text: "Senden Button"
         on_press: root.testChat()
         size_hint: 1, .10
+
+<UserText@BoxLayout>:
+    BoxLayout:
+        orientation: "horizontal"
+        Label:
+            id: "left-padding"
+            size_hint: .3, None
+        TextInput:
+            id: "username"
+            multiline: False
+            hint_text: "Username"
+            size_hint: 1, None
+            height: self.minimum_height
+            padding: 10,10,10,10
+        Label:
+            id: "right-padding"
+            size_hint: .3, None
+
+
+<UserPW@BoxLayout>:
+    BoxLayout:
+        orientation: "horizontal"
+        Label:
+            id: "pw-padding"
+            size_hint: .3, 1
+        TextInput:
+            id: "passwort"
+            multiline: False
+            hint_text: "Passwort"
+            size_hint: 1, None
+            height: self.minimum_height
+            padding: 10,10,10,10
+        Label:
+            id: "pw-padding"
+            size_hint: .3, 1
