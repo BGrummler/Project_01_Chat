@@ -3,14 +3,15 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.screenmanager import ScreenManager, Screen
 
 
+
 class Manager(ScreenManager):
     pass
 
 class LogInScreen(Screen):
-   
+        
     def validate_login(self, widget):
-        print("aufgerufen")
-
+        print("ja")
+            
 
 class ChatScreen(Screen):
     pass
