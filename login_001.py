@@ -59,27 +59,28 @@ def select_table(table, column='*', where=''):
 # Create a connection to the database
 connection = create_connection(database)
 
-# Prompt for username and password with a maximum of three attempts
-# for _ in range(3):
-#     print('Please Enter')
-#     input_username = input('Username: ')
-#     input_password = input('Password: ')
+### Prompt for username and password with a maximum of three attempts
 
-#     if user_login(input_username, input_password):
-#         print('Welcome ' + input_username)
-#         break
-#     else:
-#         print('Try again')
-# else:
-#     print("Wrong input, Shutdown")
-#     connection.close()
-#     quit()
+"""
+for _ in range(3):
+     print('Please Enter')
+     input_username = input('Username: ')
+     input_password = input('Password: ')
 
-
+     if user_login(input_username, input_password):
+         print('Welcome ' + input_username)
+         break
+     else:
+         print('Try again')
+ else:
+     print("Wrong input, Shutdown")
+     connection.close()
+     quit()
+"""
 # # Print the user table
 # print("\n" + 70 * "_" + "\n\n" + 25 * " " + "USER TABLE\n" + 70 * "_" + "\n")  # Fat Line
 # sql_return = select_table('User')  # Fetching the whole table
 # for row in sql_return:
 #     print(row)
 
-#connection.close()
+connection.close()
