@@ -16,6 +16,7 @@ def create_connection(db_file):
     conn = None
     try:
         conn = sqlite3.connect(db_file)
+        print("connection")
         return conn
     except Error as e:
         print(e)
@@ -31,7 +32,9 @@ def user_login(username, password):
     :param password: The password entered by the user.
     :return: True if the login is successful, False otherwise.
     """
+    
     sql_return = select_table('User', 'Nickname, Password', f"WHERE Nickname = '{username}'")
+    print(sql_return)
     return len(sql_return) > 0 and sql_return[0][0] == username and sql_return[0][1] == password
 
 
@@ -56,27 +59,28 @@ def select_table(table, column='*', where=''):
 # Create a connection to the database
 connection = create_connection(database)
 
-# Prompt for username and password with a maximum of three attempts
+### Prompt for username and password with a maximum of three attempts
+
+"""
 for _ in range(3):
-    print('Please Enter')
-    input_username = input('Username: ')
-    input_password = input('Password: ')
+     print('Please Enter')
+     input_username = input('Username: ')
+     input_password = input('Password: ')
 
-    if user_login(input_username, input_password):
-        print('Welcome ' + input_username)
-        break
-    else:
-        print('Try again')
-else:
-    print("Wrong input, Shutdown")
-    connection.close()
-    quit()
-
-
-# Print the user table
-print("\n" + 70 * "_" + "\n\n" + 25 * " " + "USER TABLE\n" + 70 * "_" + "\n")  # Fat Line
-sql_return = select_table('User')  # Fetching the whole table
-for row in sql_return:
-    print(row)
+     if user_login(input_username, input_password):
+         print('Welcome ' + input_username)
+         break
+     else:
+         print('Try again')
+ else:
+     print("Wrong input, Shutdown")
+     connection.close()
+     quit()
+"""
+# # Print the user table
+# print("\n" + 70 * "_" + "\n\n" + 25 * " " + "USER TABLE\n" + 70 * "_" + "\n")  # Fat Line
+# sql_return = select_table('User')  # Fetching the whole table
+# for row in sql_return:
+#     print(row)
 
 connection.close()
