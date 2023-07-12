@@ -1,5 +1,6 @@
 Manager:
 
+#Screenmanager and the defined Screens so far:
 
 <Manager>:
     LogInScreen:
@@ -9,6 +10,7 @@ Manager:
 
 <LogInScreen>:
     GridLayout:
+        id: basegrid
         rows: 2
         canvas.before:
             Rectangle:
@@ -16,31 +18,34 @@ Manager:
                 size: self.size
                 source: r"Ressources\blue-background.jpg"
         BoxLayout:
+            id: textfields
             orientation: "vertical"
             
             Label:
-                id: "oben"
+                id: oben
                 text: "Hier Username eintragen"
                 valign: "bottom"
                 
             UserText:
+                id: user_text
                 
             Label:
-                id: "mitte"
+                id: mitte
                 text: "Hier Passwort angeben"
                 valign: "bottom"
                 
             UserPW:
+                id: user_pw
                 
             Label:
-                id: "unten"
-        
+                id: unten
+    
         Button:
-            id: "sendlogin"
+            id: sendlogin
+            size_hint: None, None
+            size: dp(150), dp(50)
             text: "Send"
             on_press: root.validate_login(self)
-
-
 
 <ChatScreen>:
     name: "ChatScreen"
@@ -67,6 +72,10 @@ Manager:
         RightColumn:
             id: right_column
 
+# Elements for the ChatScreen: 
+# Left and Right Column, ScrollChat for Chatdisplaylabel
+# Design musst still be updated/done better
+
 <ScrollChat@ScrollView>:
     Label:
         id: left_label
@@ -78,7 +87,6 @@ Manager:
         valign: "top"
         padding: 5, 5, 5, 5
         
-
 <LeftColumn>:
     orientation: "vertical"
     size_hint: 1.5 , 1
@@ -92,7 +100,7 @@ Manager:
         hint_text: "Hier Nachricht eingeben"
         text_validate_unfocus: False        
         multiline: False
-        on_text_validate: root.parent.ids.right_column.testChat()
+        on_text_validate: root.parent.parent.ids.right_column.testChat()
 
 <RightColumn>:
     orientation: "vertical"
@@ -107,21 +115,24 @@ Manager:
         on_press: root.testChat()
         size_hint: 1, .10
 
+# Elements for LoginScreen:
+# Design musst still be updated/done better
+
 <UserText@BoxLayout>:
     BoxLayout:
         orientation: "horizontal"
         Label:
-            id: "left-padding"
+            id: left-padding
             size_hint: .3, None
         TextInput:
-            id: "username"
+            id: username
             multiline: False
             hint_text: "Username"
             size_hint: 1, None
             height: self.minimum_height
             padding: 10,10,10,10
         Label:
-            id: "right-padding"
+            id: right-padding
             size_hint: .3, None
 
 
@@ -129,15 +140,15 @@ Manager:
     BoxLayout:
         orientation: "horizontal"
         Label:
-            id: "pw-padding"
+            id: pw-padding
             size_hint: .3, 1
         TextInput:
-            id: "passwort"
+            id: passwort
             multiline: False
             hint_text: "Passwort"
             size_hint: 1, None
             height: self.minimum_height
             padding: 10,10,10,10
         Label:
-            id: "pw-padding"
+            id: pw-padding
             size_hint: .3, 1
