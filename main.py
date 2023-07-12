@@ -1,6 +1,8 @@
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.core.window import Window
+from kivy.metrics import dp
 import login_001 as lg
 
 
@@ -9,14 +11,15 @@ class Manager(ScreenManager):
 
 class LogInScreen(Screen):
 
+    def on_pre_enter(self):
+        Window.size = (dp(350), dp(220))
+
     login_counter = 0 #to be used later for finite attempts
 
-    def validate_login(self, widget):
+    def validate_login(self):
         user_name = self.ids.user_text.ids.username.text
         user_pw = self.ids.user_pw.ids.passwort.text
-        if user_name == "" or user_pw == "":
-            pass
-        elif lg.user_login(user_name, user_pw):
+        if lg.user_login(user_name, user_pw):
             app = App.get_running_app()
             app.root.current = "ChatScreen"
         else:
@@ -24,7 +27,10 @@ class LogInScreen(Screen):
             self.ids.user_pw.ids.passwort.text = ""
 
 class ChatScreen(Screen):
-    pass
+
+    def on_pre_enter(self):
+        Window.size = (dp(800), dp(600))
+    
 
 class RightColumn(BoxLayout):
 

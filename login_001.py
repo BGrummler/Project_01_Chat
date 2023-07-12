@@ -2,13 +2,13 @@ import sqlite3
 from sqlite3 import Error
 from pathlib import Path
 
-    """
-    Checks if the provided username and password are valid for login.
+"""
+Checks if the provided username and password are valid for login.
 
-    :param username: The username entered by the user.
-    :param password: The password entered by the user.
-    :return: True if the login is successful, False otherwise.
-    """
+:param username: The username entered by the user.
+:param password: The password entered by the user.
+:return: True if the login is successful, False otherwise.
+"""
 def user_login(username, password):
 
     # Set up the path to the database file

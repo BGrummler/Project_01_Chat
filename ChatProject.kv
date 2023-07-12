@@ -45,7 +45,7 @@ Manager:
             size_hint: None, None
             size: dp(150), dp(50)
             text: "Send"
-            on_press: root.validate_login(self)
+            on_press: root.validate_login()
 
 <ChatScreen>:
     name: "ChatScreen"
@@ -145,6 +145,7 @@ Manager:
         TextInput:
             id: passwort
             multiline: False
+            password: True
             hint_text: "Passwort"
             size_hint: 1, None
             height: self.minimum_height
