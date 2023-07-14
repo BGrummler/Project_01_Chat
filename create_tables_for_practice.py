@@ -3,7 +3,7 @@ from sqlite3 import Error
 from pathlib import Path
 
 current_path = Path.cwd()
-database = str((current_path) / "test.db") #"try" to fix path-issue
+database = current_path /"test.db" #"try" to fix path-issue
 
 def create_connection(db_file):
     """ create a database connection to the SQLite database
