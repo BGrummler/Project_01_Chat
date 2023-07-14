@@ -36,8 +36,6 @@ def Options_P1_Chat():
 def Create_Account_P1_Chat():
     while True:
         new_name = input("Please Enter new Nickname: ")
-        print(new_name)
-        print(CPC.select_table('User', 'Nickname', CPC.filter_results_by_WHERE('Nickname', new_name))[0][0])
         print(new_name == (CPC.select_table('User', 'Nickname', CPC.filter_results_by_WHERE('Nickname', new_name))[0][0]))
         if new_name == CPC.select_table('User', 'Nickname', CPC.filter_results_by_WHERE('Nickname', new_name))[0][0]: print(new_name, "already taken")
         else: break
