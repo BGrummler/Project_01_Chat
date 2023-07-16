@@ -64,7 +64,7 @@ def create_account(c, new_user, new_password):
 
 
 @try_except
-def does_nickname_exist(c, nickname): # TODO dejumble    
+def does_nickname_exist(c, nickname):   
     select_query = "SELECT * FROM User WHERE Nickname = ?"
     c.execute(select_query, (nickname,))
     return c.fetchone()
