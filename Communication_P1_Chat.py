@@ -3,7 +3,43 @@ from sqlite3 import Error
 from pathlib import Path
 
 current_path = Path.cwd()
-database = current_path/"test.db"
+database_path = current_path/"test.db"
+
+
+# this list isnt used att all i keep it for database reference
+tables_p1_chat = {
+    "server": {
+        "server.user": ["Nickname PK", "Message.MessageID FK", "Password", "Private_Mode", "Hidden_Mode"],
+        "server.group": ["Group_Name PK"],
+        "server.usergroup": ["UserGroup_ID", "User.Nickname FK", "Group.Groupname FK"],
+        "server.message": ["Message_ID PK", "Message_From FK", "Message_To FK", "Message_Body"],
+    },
+    "client": {
+        "client.chats": ["server.group.Group_Name FK","server.user.Nickname FK" ],
+        "client.message": ["Message_ID PK FK", "Message_From FK", "Message_To FK", "Message_Body FK"]
+    },
+}
+
+
+#i have not decided if i want to put the queries into each function or have the functions reference this list yet...
+sql_queries = {
+    "insert_user": "INSERT INTO User (Nickname, Password) VALUES (?, ?)",
+    "select_user_by_nickname": "SELECT * FROM User WHERE Nickname = ?",
+    "login" : "SELECT Nickname, Password FROM User WHERE Nickname = ?" #'User', 'Nickname, Password', f"WHERE Nickname = '{username}'")
+        # Add other queries as needed
+}
+
+#decorator function to handle all try → except logic and the cursor
+def try_except(function): 
+    def wrapper(*args, **kwargs):
+        global conn
+        try:
+            c = conn.cursor()
+            return function(c, *args, **kwargs)
+        except Error as e:
+            print(f"Error in {function.__name__}: {e}")
+    return wrapper
+
 
 def create_connection(db_file):
     """ 
@@ -19,41 +55,42 @@ def create_connection(db_file):
 
     return conn
 
-def create_account(new_user, new_password):
-    try:
-        c = conn.cursor()
-        new_account_sql = f"INSERT INTO User (Nickname, Password) VALUES ('{new_user}','{new_password}');"
-        c.execute(new_account_sql)
-        conn.commit()
-        new_user_confirmation = select_table('user', 'Nickname',filter_results_by_WHERE('Nickname',new_user))[0][0] # checks for the new entry
-        print("New User "+ new_user_confirmation + " created") 
-    except Error as e:
-        print(e)
 
-def select_table(table, column = '*', WHERE = ''): # default column is * | default WHERE statement is '' = empty
-    try:
-        c = conn.cursor()
-        select_table_sql = f"SELECT {column} FROM {table} {WHERE};"
-        #print(select_table_sql)
-        c.execute(select_table_sql)
-        return c.fetchall()
-    except Error as e:
-        print(e)
+@try_except
+def create_account(c, new_user, new_password):
+    insert_query = "INSERT INTO User (Nickname, Password) VALUES (?, ?)"            
+    c.execute(insert_query, (new_user, new_password))
+    conn.commit()
 
+
+@try_except
+def does_nickname_exist(c, nickname): # TODO dejumble    
+    select_query = "SELECT * FROM User WHERE Nickname = ?"
+    c.execute(select_query, (nickname,))
+    return c.fetchone()
+
+#outdated
+@try_except
+def select_table(c, table, column = '*', WHERE = ''):
+    select_table_sql = f"SELECT {column} FROM {table} {WHERE};"
+    c.execute(select_table_sql)
+    return c.fetchall()
+
+#outdated
+@try_except
 def filter_results_by_WHERE(table, new_user): #If needed overwrite the default WHERE = '' with WHERE = filter_results_by_WHERE in the select_table() FUNKTION 
     where_string_sql = f"WHERE {table} = '{new_user}'"
     return where_string_sql
 
-def user_login(username, password):
-    """
-    Checks if the provided username and password are valid for login.
 
-    :param username: The username entered by the user.
-    :param password: The password entered by the user.
-    :return: True if the login is successful, False otherwise.
-    """
-    sql_return = select_table('User', 'Nickname, Password', f"WHERE Nickname = '{username}'")
-    return len(sql_return) > 0 and sql_return[0][0] == username and sql_return[0][1] == password
+@try_except
+def user_login(c, nickname, password):
+    select_query = "SELECT Nickname, Password FROM User WHERE Nickname = ?"
+    c.execute(select_query, (nickname,))
+    check_name_pw = c.fetchone()
+    return check_name_pw != None and check_name_pw[0] == nickname and check_name_pw[1] == password
+
+
 
 def send_Message():
     pass
@@ -73,4 +110,4 @@ def invite_Friend():
 def close_connection():
     conn.close()
 
-conn = create_connection(database)
+conn = create_connection(database_path)
