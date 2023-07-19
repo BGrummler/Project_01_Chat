@@ -118,7 +118,7 @@ def select_chatroom(username=None):
 
 def Quit_P1_Chat():
     """
-    closes the cursor
+    closes the connection
     quits the programm
     """
     CPC.close_connection()
@@ -126,6 +126,14 @@ def Quit_P1_Chat():
 
 
 def invite_friend():
+    user_list_ = CPC.select_users()
+    for i in range(len(user_list_)):
+            print(user_list_[i][0],end = (15-len(user_list_[i][0]))*" ")
+            if i % 5 == 0: print()
+    del user_list_
+    friend_invite = input("Please Enter Nickname for Friend request: ")
+    
+    #print(CPC.select_users())
     pass
 
 
@@ -175,7 +183,7 @@ dict_command_local = {
     "Main_P1_Chat": {
         "1": [select_chatroom, "Select Chat", "Chat auswählen"],
         "2": [invite_friend, "Invite Friend", "Freunde einladen"],
-        "2": [join_group, "Join Group", "Gruppe beitreten"],
+        "3": [join_group, "Join Group", "Gruppe beitreten"],
         "9": [Logout_P1_Chat, "Logout", "Ausloggen"],
         "0": [Quit_P1_Chat, "Quit", "Beenden"]
     },
@@ -188,7 +196,7 @@ dict_command_local = {
     }    
 }
 
-
+#invite_friend() TODO I am working on this atm (database structure is a B I R C H !!!)
 Greet_P1_Chat()
 CPC.close_connection()
 quit()
