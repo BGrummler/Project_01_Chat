@@ -5,7 +5,7 @@ language = 1
 nickname = None
 
 
-def print_menu(menu_dict:dict, language:int) -> str:
+def print_menu(menu_dict:dict, language:list) -> str:
     """
     function to print the menu options of functions according to theyr nested keys in a dictionary
 
@@ -16,7 +16,6 @@ def print_menu(menu_dict:dict, language:int) -> str:
 
     Prints the Menu options of the current function
     """
-    print("\nMenu\n")
     for key,elem in dict_command_local[menu_dict].items():
         print(key, elem[language])
 
@@ -34,6 +33,9 @@ def handle_name(target_function):
     """
     def wrapper(*args, **kwargs):
         f_name = target_function.__name__
+        print("┏" + (len(f_name) + 2) * "━" + "┓")
+        print("┃", f_name, "┃")
+        print("┗" + (len(f_name) + 2) * "━" + "┛")
         print_menu(f_name, language)
         try: return target_function(*args, **kwargs)
         except KeyError: print(f"Error in {f_name}")
@@ -47,7 +49,7 @@ def Greet_P1_Chat():
     returns function chosen by corresponding input
     """
     while True:
-        _i = input()
+        _i = input(">>> ")
         try: return dict_command_local["Greet_P1_Chat"][_i][0]()
         except KeyError: print("Wrong Input Line 29")
 
@@ -59,9 +61,10 @@ def Login_P1_Chat():
     """
     print("\nLogin\n")
     for _ in range(3):
+        global nickname
         nickname = input("Please enter your Nickname: ")
         password = input("Please enter your Password: ")
-        if CPC.user_login(nickname, password): return Main_P1_Chat(nickname)
+        if CPC.user_login(nickname, password): return Main_P1_Chat()
         else: print("Wrong Input Line 38")
     print("Wrong Input loging out"), quit()
 
@@ -71,9 +74,8 @@ def Options_P1_Chat():
     """
     TODO
     """
-    print("Options not implemented yet")
-    Greet_P1_Chat()
     _ = input(">>> ")
+    dict_command_local["Options_P1_Chat"][_][0]()
 
 
 def Create_Account_P1_Chat():
@@ -95,23 +97,36 @@ def Create_Account_P1_Chat():
     return Greet_P1_Chat()
 
 
+def delete_account_P1_Chat():
+    global nickname
+    print("Delete account")
+    while True:
+        n_ = input("Press \"b\" for abort\nplease enter nickname to delete: ")
+        if str.lower(n_) == "b": return Options_P1_Chat()
+        if n_ == nickname: break
+        else: print("wrong nickname") 
+    
+
+
 @handle_name
-def Main_P1_Chat(username=None):
+def Main_P1_Chat():
     """
     Main Chat Window with options to chat or invite
     returns function accordingly
     """
-    print(f"Welcome {username}")
+    global nickname
+    print(f"Welcome {nickname}")
     _ = input(">>> ")
     dict_command_local["Main_P1_Chat"][_][0]()
 
 
 @handle_name
-def select_chatroom(username=None):
+def select_chatroom():
     """
     Select Group or Person to chat with
     """
-    print(f"Welcome {username}")
+    global nickname
+    print(f"Welcome {nickname}")
     _ = input(">>> ")
     dict_command_local["select_chatroom"][_][0]()
 
@@ -130,11 +145,22 @@ def invite_friend():
     for i in range(len(user_list_)):
             print(user_list_[i][0],end = (15-len(user_list_[i][0]))*" ")
             if i % 5 == 0: print()
-    del user_list_
     friend_invite = input("Please Enter Nickname for Friend request: ")
+    del user_list_
     
     #print(CPC.select_users())
     pass
+
+
+def select_language_P1_Chat():
+    print("┏" + (len("Language") + 2) * "━" + "┓")
+    print("┃", "Language", "┃")
+    print("┗" + (len("Language") + 2) * "━" + "┛")
+    print("1 english\n2 german")
+    l_ = int(input(">>> "))
+    if 0 < l_ < 3:
+        global language
+        language = l_
 
 
 def join_group():
@@ -169,12 +195,12 @@ dict_command_local = {
     "Greet_P1_Chat": {
         "1": [Login_P1_Chat, "Login", "Einloggen"],
         "2": [Create_Account_P1_Chat, "Create Account", "Account anlegen"],
-        "3": [Options_P1_Chat, "Options", ""],
+        "3": [Options_P1_Chat, "Options", "Optionen"],
         "0": [Quit_P1_Chat, "Quit", "Beenden"]
     },
-    "Options_P1_Chat": { #placeholders
-        "1": [Quit_P1_Chat, "Quit", "Beenden"],
-        "2": [Quit_P1_Chat, "Quit", "Beenden"],
+    "Options_P1_Chat": {
+        "1": [select_language_P1_Chat, "language", "Sprache"],
+        "2": [delete_account_P1_Chat, "delete account", "Account löschen"],
         "3": [Quit_P1_Chat, "Quit", "Beenden"],
         "4": [Quit_P1_Chat, "Quit", "Beenden"],
         "9": [Quit_P1_Chat, "Quit", "Beenden"],
@@ -196,7 +222,11 @@ dict_command_local = {
     }    
 }
 
+
+while True:
+    if nickname != None:
+        Main_P1_Chat()
+    else:
+        Greet_P1_Chat()
+
 #invite_friend() TODO I am working on this atm (database structure is a B I R C H !!!)
-Greet_P1_Chat()
-CPC.close_connection()
-quit()
