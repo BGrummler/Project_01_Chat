@@ -50,8 +50,7 @@ def Greet_P1_Chat():
     """
     while True:
         _i = input(">>> ")
-        try: return dict_command_local["Greet_P1_Chat"][_i][0]()
-        except KeyError: print("Wrong Input Line 29")
+        return dict_command_local["Greet_P1_Chat"][_i][0]()
 
 
 def Login_P1_Chat():
@@ -59,23 +58,28 @@ def Login_P1_Chat():
     Login function → checks for correct username and password
     returns main chat window and username
     """
-    print("\nLogin\n")
+    print("┏" + 7 * "━" + "┓")
+    print("┃", "Login", "┃")
+    print("┗" + 7 * "━" + "┛")
     for _ in range(3):
         global nickname
         nickname = input("Please enter your Nickname: ")
         password = input("Please enter your Password: ")
         if CPC.user_login(nickname, password): return Main_P1_Chat()
-        else: print("Wrong Input Line 38")
-    print("Wrong Input loging out"), quit()
+        else: print("Input not correct")
+    print("Wrong Input logging out"), quit()
 
 
 @handle_name
 def Options_P1_Chat():
     """
-    TODO
+    Select options to change language, Terminal Colour, Private Mode
+
+    returns: 
+        function for desired option
     """
     _ = input(">>> ")
-    dict_command_local["Options_P1_Chat"][_][0]()
+    return dict_command_local["Options_P1_Chat"][_][0]()
 
 
 def Create_Account_P1_Chat():
@@ -83,7 +87,8 @@ def Create_Account_P1_Chat():
     Checks if User already exists if != 
     Creates new entries in the user database
 
-    returns to the Login Screen
+    returns: 
+        Login Screen
     """
     while True:
         print('Enter "B" for back')
@@ -98,12 +103,17 @@ def Create_Account_P1_Chat():
 
 
 def delete_account_P1_Chat():
+    """
+    Deletes the Account currently logged in
+
+    TODO
+    """
     global nickname
     print("Delete account")
     while True:
         n_ = input("Press \"b\" for abort\nplease enter nickname to delete: ")
         if str.lower(n_) == "b": return Options_P1_Chat()
-        if n_ == nickname: break
+        if n_ == nickname: break #TODO implement password logic for confirmation
         else: print("wrong nickname") 
     
 
@@ -141,21 +151,34 @@ def Quit_P1_Chat():
 
 
 def invite_friend():
-    user_list_ = CPC.select_users()
-    for i in range(len(user_list_)):
-            print(user_list_[i][0],end = (15-len(user_list_[i][0]))*" ")
-            if i % 5 == 0: print()
-    friend_invite = input("Please Enter Nickname for Friend request: ")
-    del user_list_
-    
-    #print(CPC.select_users())
+    """
+    Prints all Members if Profile is not hidden and are not the current user.
+    TODO implement Friendslist DB for local and implement logic to not print members already
+    in the Friendslist.
+
+    returns:
+        TODO adds Member or Group to the local Database for communication
+    """
+    user_list = CPC.select_users()
+    user_list = [elem[0] for elem in user_list if elem[2] == 0 and elem[0] != nickname] 
+    # TODO add current friend DB to logic
+    for i in range(len(user_list)):            
+            print(user_list[i],end = (15-len(user_list[i]))*" ")
+            if (i + 1) % 5 == 0: print()
+    friend_invite = input("\nPlease Enter Nickname for Friend request\n>>> ")
+    # TODO add Friend to Local DB
+    del user_list
     pass
 
 
 def select_language_P1_Chat():
-    print("┏" + (len("Language") + 2) * "━" + "┓")
+    """
+    Prints available Language Packs
+    Changes Language
+    """
+    print("┏" + 10 * "━" + "┓")
     print("┃", "Language", "┃")
-    print("┗" + (len("Language") + 2) * "━" + "┛")
+    print("┗" + 10 * "━" + "┛")
     print("1 english\n2 german")
     l_ = int(input(">>> "))
     if 0 < l_ < 3:
@@ -228,5 +251,3 @@ while True:
         Main_P1_Chat()
     else:
         Greet_P1_Chat()
-
-#invite_friend() TODO I am working on this atm (database structure is a B I R C H !!!)
