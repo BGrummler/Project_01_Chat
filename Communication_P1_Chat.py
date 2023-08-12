@@ -6,7 +6,7 @@ current_path = Path.cwd()
 database_path = current_path/"test.db"
 
 
-# this list isnt used att all i keep it for database reference
+# this list isnt used at all i keep it for database reference
 tables_p1_chat = {
     "server": {
         "server.user": ["Nickname PK", "Message.MessageID FK", "Password", "pending", "Private_Mode", "Hidden_Mode"],
