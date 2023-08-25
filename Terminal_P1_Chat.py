@@ -1,5 +1,6 @@
 # Terminal for P1_Chat
 import Communication_P1_Chat as CPC
+from datetime import datetime
 
 language = 1
 nickname = None
@@ -56,14 +57,23 @@ def Greet_P1_Chat():
 def Login_P1_Chat():
     """
     Login function → checks for correct username and password
-    returns main chat window and username
+
+    Arguments:
+        username : str 
+
+    returns:
+        main chat window 
     """
     print("┏" + 7 * "━" + "┓")
     print("┃", "Login", "┃")
     print("┗" + 7 * "━" + "┛")
     for _ in range(3):
         global nickname
+        nickname = None
+        print("q to quit")
         nickname = input("Please enter your Nickname: ")
+        if nickname == "q":
+            Quit_P1_Chat()
         password = input("Please enter your Password: ")
         if CPC.user_login(nickname, password): return Main_P1_Chat()
         else: print("Input not correct")
@@ -94,29 +104,33 @@ def Create_Account_P1_Chat():
         print('Enter "B" for back')
         new_name = input("Please Enter new Nickname: ")
         if str.lower(new_name) == "b": return Greet_P1_Chat() # b for back to Login Screen
-        if CPC.does_nickname_exist(new_name) == None: break
+        if CPC.nickname_exist(new_name) == None: break
         else: print("Nickname " + new_name + " unavailable")
     new_password = input("Please Enter new Password: ")
     CPC.create_account(new_name, new_password)
-    print("new User " + CPC.does_nickname_exist(new_name)[0] + " created")
+    print("new User " + CPC.nickname_exist(new_name)[1] + " created")
+    CPC.add_Friend(new_name, new_name)
+    CPC.add_Friend("admin", new_name)
     return Greet_P1_Chat()
 
 
 def delete_account_P1_Chat():
     """
-    Deletes the Account currently logged in
+    Checks for Name and Password
+    Deletes an Account
 
-    TODO
     """
-    global nickname
     print("Delete account")
     while True:
         n_ = input("Press \"b\" for abort\nplease enter nickname to delete: ")
         if str.lower(n_) == "b": return Options_P1_Chat()
-        if n_ == nickname: break #TODO implement password logic for confirmation
-        else: print("wrong nickname") 
-    
+        password = input("please confirm password: ")
+        if CPC.user_login(n_, password):
+            CPC.delete_Account(n_)
+            return Options_P1_Chat()
+        else: print("wrong credentials")
 
+    
 
 @handle_name
 def Main_P1_Chat():
@@ -125,11 +139,26 @@ def Main_P1_Chat():
     returns function accordingly
     """
     global nickname
+    check_invites()
     print(f"Welcome {nickname}")
     _ = input(">>> ")
-    dict_command_local["Main_P1_Chat"][_][0]()
+    return dict_command_local["Main_P1_Chat"][_][0]()
 
 
+def check_invites():
+    """
+    Checks for invites from other Users on the server Database
+    """
+    new_messages = CPC.get_Message(nickname)
+    [print(elem) for elem in new_messages]
+    for elem in new_messages:
+        [print(_) for _ in elem]
+        CPC.save_Message(elem[0],elem[1], elem[2], elem[3], elem[4])
+        CPC.delete_Message(elem[0])
+
+
+
+#TODO
 @handle_name
 def select_chatroom():
     """
@@ -137,13 +166,25 @@ def select_chatroom():
     """
     global nickname
     print(f"Welcome {nickname}")
+    friend_list = CPC.select_friend(nickname)
+    friend_list = [elem[0] for elem in friend_list]
+    for i in range(len(friend_list)):
+            print(i,")",friend_list[i],end = (15-len(friend_list[i]))*" ")
+            if (i + 1) % 5 == 0: print()
+    print("\nq for quit")
     _ = input(">>> ")
-    dict_command_local["select_chatroom"][_][0]()
+    if _ == "q":
+            Quit_P1_Chat()
+    return dict_command_local["select_chatroom"][_][0]()
+
+def Delete_All_Data():
+    CPC.delete_all()
+    return Greet_P1_Chat()
 
 
 def Quit_P1_Chat():
     """
-    closes the connection
+    closes the connections
     quits the programm
     """
     CPC.close_connection()
@@ -152,23 +193,27 @@ def Quit_P1_Chat():
 
 def invite_friend():
     """
-    Prints all Members if Profile is not hidden and are not the current user.
-    TODO implement Friendslist DB for local and implement logic to not print members already
-    in the Friendslist.
-
-    returns:
-        TODO adds Member or Group to the local Database for communication
+    Prints all Members if Profile is not hidden and are not the local friends List.
+    sends invite to member server db
+    adds Member to local Friend list
     """
-    user_list = CPC.select_users()
-    user_list = [elem[0] for elem in user_list if elem[2] == 0 and elem[0] != nickname] 
-    # TODO add current friend DB to logic
-    for i in range(len(user_list)):            
+    user_list = CPC.select_user()
+    friend_list = CPC.select_friend(nickname)
+    friend_list = [elem[0] for elem in friend_list]
+    user_list = [elem[1] for elem in user_list if elem[3] == 0 and elem[1] not in friend_list]
+    for i in range(len(user_list)):
             print(user_list[i],end = (15-len(user_list[i]))*" ")
             if (i + 1) % 5 == 0: print()
     friend_invite = input("\nPlease Enter Nickname for Friend request\n>>> ")
-    # TODO add Friend to Local DB
+    if friend_invite == "q":
+        Quit_P1_Chat()
+    if friend_invite in user_list:
+        CPC.send_Message(datetime.now(), "Admin" , friend_invite, "Friend request from " + nickname)
+        CPC.add_Friend(friend_invite, nickname)
+    else: print("error in invite_friend")
+    
     del user_list
-    pass
+
 
 
 def select_language_P1_Chat():
@@ -211,6 +256,8 @@ def Invite_P1_Chat():
 
 
 def Logout_P1_Chat():
+    global nickname
+    nickname = None
     Greet_P1_Chat()
 
 #dictionary with functions and descriptions
@@ -225,7 +272,7 @@ dict_command_local = {
         "1": [select_language_P1_Chat, "language", "Sprache"],
         "2": [delete_account_P1_Chat, "delete account", "Account löschen"],
         "3": [Quit_P1_Chat, "Quit", "Beenden"],
-        "4": [Quit_P1_Chat, "Quit", "Beenden"],
+        "4": [Delete_All_Data, "Delete all Data", "Alle Daten löschen"],
         "9": [Quit_P1_Chat, "Quit", "Beenden"],
         "0": [Quit_P1_Chat, "Quit", "Beenden"]
     },
