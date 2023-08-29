@@ -109,8 +109,8 @@ def Create_Account_P1_Chat():
     new_password = input("Please Enter new Password: ")
     CPC.create_account(new_name, new_password)
     print("new User " + CPC.nickname_exist(new_name)[1] + " created")
-    CPC.add_Friend(new_name, new_name)
     CPC.add_Friend("admin", new_name)
+    CPC.add_Friend(new_name, new_name)
     return Greet_P1_Chat()
 
 
@@ -150,32 +150,69 @@ def check_invites():
     Checks for invites from other Users on the server Database
     """
     new_messages = CPC.get_Message(nickname)
-    [print(elem) for elem in new_messages]
+    #print(f"You have {len(new_messages)} new Messages")
+    #[print(elem) for elem in new_messages]
     for elem in new_messages:
-        [print(_) for _ in elem]
         CPC.save_Message(elem[0],elem[1], elem[2], elem[3], elem[4])
         CPC.delete_Message(elem[0])
 
 
 
-#TODO
-@handle_name
+
+#@handle_name
 def select_chatroom():
     """
     Select Group or Person to chat with
     """
     global nickname
-    print(f"Welcome {nickname}")
+    print(f"Select Chat target")
     friend_list = CPC.select_friend(nickname)
     friend_list = [elem[0] for elem in friend_list]
     for i in range(len(friend_list)):
             print(i,")",friend_list[i],end = (15-len(friend_list[i]))*" ")
             if (i + 1) % 5 == 0: print()
     print("\nq for quit")
-    _ = input(">>> ")
-    if _ == "q":
+    chat_with = input(">>> ")
+    if chat_with == "q":
             Quit_P1_Chat()
-    return dict_command_local["select_chatroom"][_][0]()
+    elif chat_with == "0":
+        new_invites = CPC.get_Message2(nickname, friend_list[int(chat_with)])
+        if len(new_invites) == 0:
+            print("No new Invites")
+            Main_P1_Chat()
+        
+        lists_of_invites = [elem[4][20:] for elem in new_invites]
+        [print(str(i)+")", lists_of_invites[i]) for i in range(len(lists_of_invites))]
+        friend_add = input("Select Friend to Add\n>>>")
+        if friend_add.isdigit() and int(friend_add) in range(len(lists_of_invites)):
+            CPC.add_Friend(lists_of_invites[int(friend_add)], nickname)
+            print(lists_of_invites[int(friend_add)], "added to Friends list")
+            print("ID ", new_invites[int(friend_add)][0], " DELETED")
+            CPC.delete_Message2(new_invites[int(friend_add)][0])
+    elif chat_with.isdigit() and int(chat_with) in range(1,len(friend_list)):
+        #chat_with = int(chat_with)
+        return Start_Chat( friend_list[int(chat_with)])
+    else: print("wrong input")
+
+
+
+def Start_Chat(chat_with):
+    chat_history = CPC.get_Message2(chat_with, nickname)
+    print(50 * "_")
+    print(f"Chatting with {chat_with}")
+    print(50 * "_")
+    [print(elem[4]) for elem in chat_history]
+    print("b for back")
+    message = input(">>>")
+    if str.lower(message) == "b":return Main_P1_Chat()
+    CPC.send_Message(datetime.now(), chat_with, nickname, message)
+    check_invites()
+    #new_messages = CPC.get_Message(nickname)
+    return Start_Chat(chat_with)
+    
+
+
+
 
 def Delete_All_Data():
     CPC.delete_all()
@@ -208,11 +245,9 @@ def invite_friend():
     if friend_invite == "q":
         Quit_P1_Chat()
     if friend_invite in user_list:
-        CPC.send_Message(datetime.now(), "Admin" , friend_invite, "Friend request from " + nickname)
+        CPC.send_Message(datetime.now(), "admin" , friend_invite, "Friend request from " + nickname)
         CPC.add_Friend(friend_invite, nickname)
     else: print("error in invite_friend")
-    
-    del user_list
 
 
 
@@ -232,10 +267,6 @@ def select_language_P1_Chat():
 
 
 def join_group():
-    pass
-
-
-def Send_Message_P1_Chat():
     pass
 
 
@@ -273,7 +304,7 @@ dict_command_local = {
         "2": [delete_account_P1_Chat, "delete account", "Account löschen"],
         "3": [Quit_P1_Chat, "Quit", "Beenden"],
         "4": [Delete_All_Data, "Delete all Data", "Alle Daten löschen"],
-        "9": [Quit_P1_Chat, "Quit", "Beenden"],
+        "9": [Logout_P1_Chat, "Logout", "Ausloggen"],
         "0": [Quit_P1_Chat, "Quit", "Beenden"]
     },
     "Main_P1_Chat": {
@@ -284,7 +315,7 @@ dict_command_local = {
         "0": [Quit_P1_Chat, "Quit", "Beenden"]
     },
     "select_chatroom": {
-        "1": [Send_Message_P1_Chat, "Send Message", "Nachricht senden"],
+        "1": [Start_Chat, "Send Message", "Nachricht senden"],
         "2": [Delete_Message_P1_Chat, "Delete Message", "Nachricht löschen"],
         "8": [Main_P1_Chat, "Main menu", "Hauptmenue"],
         "9": [Logout_P1_Chat, "Logout", "Ausloggen"],
