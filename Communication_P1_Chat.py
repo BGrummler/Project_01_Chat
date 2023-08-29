@@ -34,6 +34,7 @@ sql_queries = {
 def try_except(function): 
     """
     decorator function to handle all try → except logic and the cursor
+
     Arguments:
         function: function to wrap
         c: sqlite3.cursor
@@ -57,8 +58,10 @@ def try_except(function):
 def create_connection(db_file:str) -> sqlite3.Connection:
     """ 
     creates a database connection to the SQLite databas specified by db_file
+
     Arguments:
         db_file path to database
+
     Returns: 
         Connection object or None
     """
@@ -75,10 +78,12 @@ def create_connection(db_file:str) -> sqlite3.Connection:
 def user_login(c:tuple[sqlite3.Cursor,sqlite3.Cursor], nickname:str, password:str):
     """
     compare entered username and password witht he database
+
     Arguments:
         c: cursor for database communication
         nickname: input from user
         password: input from user
+
     Returns:
         bool: True if user exists and corresponding password is correct 
     """
@@ -92,10 +97,12 @@ def user_login(c:tuple[sqlite3.Cursor,sqlite3.Cursor], nickname:str, password:st
 def create_account(c:tuple[sqlite3.Cursor,sqlite3.Cursor], new_user:str, new_password:str):
     """
     create new account on the database
+
     Arguments:
         c: sqlite 3 cursor object
         new_user: Nickname for the new user
         password: password for the new user
+
     Returns:
         None
     """
@@ -108,9 +115,11 @@ def create_account(c:tuple[sqlite3.Cursor,sqlite3.Cursor], new_user:str, new_pas
 def nickname_exist(c:tuple[sqlite3.Cursor,sqlite3.Cursor], nickname:str) -> tuple:
     """
     checks if the username already exists
+
     Arguments:
         c: cursor for database communication
         nickname: nickname to seach for in the database
+
     Returns:
         Tuple with the nickname if any, else empty tuple
     """
@@ -151,9 +160,11 @@ def delete_Account(c:tuple[sqlite3.Cursor,sqlite3.Cursor], nickname):
 def add_Friend(c:tuple[sqlite3.Cursor,sqlite3.Cursor], target:str, source:str) -> None:
     """
     add a account on the local database
+
     Arguments:
         c: sqlite 3 cursor object
         nickname: user to add to the locan database
+
     Returns:
         None
     """
@@ -185,11 +196,26 @@ def get_Message(c:tuple[sqlite3.Cursor,sqlite3.Cursor], source_nick:str) -> list
     c[0].execute(select_query, [source_nick])
     return c[0].fetchall()
 
+@try_except
+def get_Message2(c:tuple[sqlite3.Cursor,sqlite3.Cursor], source_nick:str, friend_nick:str) -> list[tuple]:
+    """
+    TODO
+    """
+    select_query = "SELECT * FROM CLIENT_CHAT WHERE TargetUserID = ? and SourceUserID = ?"
+    c[1].execute(select_query, [source_nick, friend_nick])
+    return c[1].fetchall()
+
 
 @try_except
 def delete_Message(c:tuple[sqlite3.Cursor,sqlite3.Cursor], source):
     delete_query = "DELETE FROM SERVER_CHAT WHERE ChatID = ?"
     c[0].execute(delete_query, [source])
+    conn_server.commit()
+
+@try_except
+def delete_Message2(c:tuple[sqlite3.Cursor,sqlite3.Cursor], source):
+    delete_query = "DELETE FROM CLIENT_CHAT WHERE SOURCE_ID = ?"
+    c[1].execute(delete_query, [source])
     conn_server.commit()
 
 
